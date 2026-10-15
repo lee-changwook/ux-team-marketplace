@@ -8,7 +8,7 @@ Chat · Cowork · Code 탭에서 같은 스킬을 씁니다.
 ```
 .claude-plugin/marketplace.json   마켓플레이스 정의 (dada-ux)
 plugins/ux-team/                  플러그인
-  .claude-plugin/plugin.json      버전 필드 없음: 커밋마다 갱신이 전파됨
+  .claude-plugin/plugin.json      version 1.0.0부터. 팀원에게 갱신을 보낼 때마다 올림
   skills/<스킬>/SKILL.md          스킬 11개
   skills/<스킬>/references/_shared/  shared/에서 복사된 공유 사본 (직접 고치지 않음)
 shared/                           여러 스킬이 쓰는 원본 (팀 지침 · 교차 지점 · 토큰 · 글쓰기 · 화면 분기)
