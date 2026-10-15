@@ -1,0 +1,14 @@
+{
+  "name": "dada-ux",
+  "description": "다다 UX팀 플러그인 마켓플레이스",
+  "owner": {
+    "name": "이창욱"
+  },
+  "plugins": [
+    {
+      "name": "ux-team",
+      "source": "./plugins/ux-team",
+      "description": "UX팀 기획자를 위한 사내 맥락 스킬 묶음: 정책 위키, 리서치 리포트, 핸즈오프 점검, 교차 지점"
+    }
+  ]
+}

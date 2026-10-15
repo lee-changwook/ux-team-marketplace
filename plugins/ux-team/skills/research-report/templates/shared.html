@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{제목}}</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>/*@css*/</style>
+<style>
+/* 공유용 전용 */
+.bar nav { gap: 26px; }
+.body { max-width: 760px; }
+
+/* 두 분 나란히 — 가운데 세로선 */
+.duo { display: grid; grid-template-columns: 1fr 1fr; }
+.duo > .col { padding: 0 28px; }
+.duo > .col:first-child { padding-left: 0; }
+.duo > .col + .col { border-left: 1px solid var(--lilac-2); padding-right: 0; }
+.who-name { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
+.persona { margin: 10px 0 0; font-size: 18px; font-weight: 700; line-height: 1.45; }
+.findings { list-style: none; margin: 16px 0 0; padding: 0; font-size: 15px; }
+.findings li { position: relative; padding: 0 0 0 18px; margin: 0 0 10px; }
+.findings li::before { content: ""; position: absolute; left: 0; top: 0.7em; width: 7px; height: 7px; border-radius: 2px; background: var(--lilac-3); }
+.facts { display: grid; grid-template-columns: 1fr 1fr; margin: 22px 0 0; background: var(--lilac); border-radius: 14px; overflow: hidden; }
+.facts div { padding: 14px 16px; border-bottom: 1px solid var(--lilac-2); }
+.facts div:nth-child(odd) { border-right: 1px solid var(--lilac-2); }
+.facts div:nth-last-child(-n+2) { border-bottom: 0; }
+.facts span { display: block; color: var(--muted); font-size: 12px; }
+.facts strong { display: block; font-size: 15px; font-weight: 650; margin-top: 2px; line-height: 1.45; }
+
+/* 문항별 답변 */
+.qa-head { margin: 52px 0 0; }
+.qa-head:first-child { margin-top: 0; }
+.names { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; padding: 12px 0 0; font-size: 13px; font-weight: 700; }
+.names .col { display: flex; align-items: center; gap: 6px; }
+.pair { margin-top: 12px; }
+.pair .col::before { display: none; content: attr(data-who); font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.chip { padding: 4px 10px; line-height: 1.5; }
+.text { padding: 10px 14px; font-size: 14px; }
+.follow { font-size: 12px; }
+
+/* 제안 */
+.ask { margin: 0; font-size: 15px; color: var(--muted); }
+.verdict-line { margin: 6px 0 0; font-size: 28px; }
+
+@media (max-width: 900px) {
+  .bar nav { gap: 18px; }
+  .verdict-line { font-size: 22px; }
+}
+@media (max-width: 640px) {
+  .duo { grid-template-columns: 1fr; }
+  .duo > .col, .duo > .col + .col { padding: 0; border-left: 0; }
+  .summary .duo > .col + .col { margin-top: 36px; padding-top: 36px; border-top: 1px solid var(--lilac-2); }
+  .pair .col + .col { margin-top: 12px; }
+  .pair .col::before { display: block; }
+  .names { display: none; }
+}
+
+@page { size: A4; margin: 14mm 12mm; }
+@media print {
+  body { font-size: 13px; }
+  .bar { display: none; }
+  .page { max-width: none; padding: 0; }
+  .hero, .sec { grid-template-columns: 1fr; gap: 20px; }
+  .rail { position: static; }
+  .rail h2 { font-size: 24px; }
+  .body { max-width: none; }
+  .hero { min-height: 262mm; align-content: center; padding: 0; break-after: page; }
+  .hero h1 { font-size: 40px; }
+  .sec { padding: 0 0 24px; border-top: 0; break-before: page; }
+  .band { background: none; border: 0; }
+  .band .body { background: var(--lilac); border-radius: 16px; padding: 20px; }
+  .row, .duel, .same, .role, .flow li, ol.rails li, .checks li, .facts, table, .findings li { break-inside: avoid; }
+  .qa-head { break-after: avoid; }
+  .names { break-after: avoid; }
+  h3.part { margin-top: 36px; break-after: avoid; }
+  .flow { grid-template-columns: repeat(3, 1fr); }
+  .roles { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .same ul { grid-template-columns: 1fr 1fr; }
+  .persona { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="page">
+    <span class="title">{{제목}}</span>
+    <nav aria-label="섹션">
+      <a href="#summary">요약</a>
+      <a href="#answers">문항별 답변</a>
+      <a href="#compare">비교</a>
+      <a href="#support">{{준비 섹션 이름}}</a>
+      <a href="#proposal">{{제안 섹션 이름}}</a>
+    </nav>
+  </div>
+</div>
+
+<main class="page">
+
+  <header class="hero">
+    <div class="kicker"><b>{{리서치 이름}}</b>{{응답 날짜}}</div>
+    <div>
+      <h1>{{한 문장 결론: 강점식 대구, 합니다체}}</h1>
+      <p class="lede">{{결론을 푸는 두 문장}}</p>
+      <dl class="meta">
+        <dt>대상</dt><dd>{{응답자 실명}}</dd>
+        <dt>자료</dt><dd>{{쓴 자료}}</dd>
+        <dt>이 문서는</dt><dd>{{무엇을 정리했고 무엇에 참고하려는지}} 문장 끝의 숫자는 근거가 된 문항 번호입니다.</dd>
+      </dl>
+    </div>
+  </header>
+
+  <section class="sec summary" id="summary" aria-labelledby="h-summary">
+    <div class="rail">
+      <h2 id="h-summary">요약</h2>
+      <p>{{답변으로 본 두 분의 무엇}}</p>
+    </div>
+    <div class="body duo">
+      <!-- 사람마다 col 하나. 마커 클래스는 p1 · p2 -->
+      <div class="col">
+        <div class="who-name"><i class="mk p1"></i>{{사람1}}</div>
+        <p class="persona">{{강점식 한 줄 요약}}</p>
+        <ul class="findings">
+          <!-- 3개 -->
+          <li>{{발견, 합니다체}}<span class="ref">{{근거 문항 번호}}</span></li>
+        </ul>
+        <div class="facts">
+          <!-- 6칸. 라벨은 두 분이 같게 -->
+          <div><span>{{라벨}}</span><strong>{{짧은 값}}</strong></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="who-name"><i class="mk p2"></i>{{사람2}}</div>
+        <p class="persona">{{강점식 한 줄 요약}}</p>
+        <ul class="findings">
+          <li>{{발견, 합니다체}}<span class="ref">{{근거 문항 번호}}</span></li>
+        </ul>
+        <div class="facts">
+          <div><span>{{라벨}}</span><strong>{{짧은 값}}</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="answers" aria-labelledby="h-answers">
+    <div class="rail">
+      <h2 id="h-answers">문항별 답변</h2>
+      <p>{{N}}개 문항에 두 분이 적은 답을 그대로 옮겨 나란히 두었습니다.</p>
+    </div>
+    <div class="body" id="pairs"></div>
+  </section>
+</main>
+
+<div class="band">
+  <div class="page">
+    <section class="sec" id="compare" aria-labelledby="h-compare">
+      <div class="rail">
+        <h2 id="h-compare">비교</h2>
+        <p>같은 질문에 서로 다르게 답한 항목입니다. 진한 배지는 {{팀이 함께 정해야 할 부분}}입니다.</p>
+      </div>
+      <div class="body">
+        <div class="duel-head" aria-hidden="true">
+          <div class="plate l">{{사람1}}<small>{{사람1의 출발점, ~하는 편}}</small></div>
+          <div class="vs">VS</div>
+          <div class="plate">{{사람2}}<small>{{사람2의 출발점, ~하는 편}}</small></div>
+        </div>
+
+        <!-- 결론에 쓰이는 차이만 6~8장. 같은 주제의 문항은 한 장으로. 보완은 duel + v-fit -->
+        <div class="duel">
+          <div class="side l">{{사람1의 답}}</div>
+          <div class="mid"><span class="axis">{{축 이름}} ({{번호}})</span><span class="verdict v-fit">보완</span></div>
+          <div class="side">{{사람2의 답}}</div>
+          <p class="why">{{차이가 뜻하는 것, 합니다체}}</p>
+        </div>
+
+        <!-- 함께 정할 것은 3장 안팎. duel hot + v-hot -->
+        <div class="duel hot">
+          <div class="side l">{{사람1의 답}}</div>
+          <div class="mid"><span class="axis">{{축 이름}} ({{번호}})</span><span class="verdict v-hot">함께 정할 것</span></div>
+          <div class="side">{{사람2의 답}}</div>
+          <p class="why">{{제안, "~하면 어떨까요?"}}</p>
+        </div>
+
+        <div class="same">
+          <h3>두 분의 공통점</h3>
+          <ul>
+            <!-- 4개 안팎. 완전히 같은 답이 없으면 같은 방향의 답 -->
+            <li><span>{{축 이름}} ({{번호}})</span>{{같은 답, 합니다체}}</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<main class="page">
+  <section class="sec" id="support" aria-labelledby="h-support">
+    <div class="rail">
+      <h2 id="h-support">{{준비 섹션 이름}}</h2>
+      <p>{{우선순위를 정한 기준}}</p>
+    </div>
+    <div class="body">
+      <ol class="rails">
+        <li><div><b>{{준비할 것}}</b><span>{{무엇을 하는지와 이유}} ({{근거 문항 번호}})</span></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec" id="proposal" aria-labelledby="h-proposal">
+    <div class="rail">
+      <h2 id="h-proposal">{{제안 섹션 이름}}</h2>
+      <p>{{무엇을 바탕으로 한 제안인지}} 확정된 내용은 아닙니다.</p>
+    </div>
+    <div class="body">
+      <p class="ask">{{이렇게 나눠 보면 어떨까요?}}</p>
+      <p class="verdict-line">{{한 문장 제안}}</p>
+
+      <!-- 아래 구성 요소는 리서치 목적에 맞는 것만 골라 이 순서로 둔다 -->
+      <div class="roles">
+        <!-- 3열 블록, 클래스 p1 · p2 · lead. 대개 빼고 흐름부터 쓴다 -->
+        <div class="role p1">
+          <h3>{{사람1}}</h3>
+          <p class="tr">{{한 줄}}</p>
+          <ul>
+            <li>{{맡을 일}}</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="part">{{흐름 이름}}</h3>
+      <ol class="flow">
+        <li><b>{{단계}}</b><span class="decide">{{무엇을 정하는지}}: {{누가}}</span><div class="who"><span>{{누가}}</span></div></li>
+      </ol>
+      <p class="note">{{흐름을 이렇게 둔 이유}}</p>
+
+      <h3 class="part">{{현황 표 이름}}</h3>
+      <table>
+        <thead><tr><th>{{기준}}</th><th>{{사람1}}</th><th>{{사람2}}</th></tr></thead>
+        <tbody>
+          <tr><td>{{항목}}</td><td><span class="pill">{{값}}</span></td><td><span class="pill none">{{다른 사람이 맡았으면}}</span></td></tr>
+        </tbody>
+      </table>
+      <p class="note">{{단서}}</p>
+
+      <h3 class="part">함께 이야기할 것</h3>
+      <ul class="checks">
+        <!-- 4개 안팎. 마지막은 제안 전체가 두 분 생각과 맞는지 묻는 질문 -->
+        <li>{{질문, "~할까요?"}} ({{근거 문항 번호}})</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="bm" viewBox="0 0 14 16"><path d="M2 1h10v14l-5-3.5L2 15z" fill="currentColor"/></symbol>
+  <symbol id="chev" viewBox="0 0 10 10"><path d="M3 1.5 6.5 5 3 8.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<script>
+const PEOPLE = [{ key: '{{키1}}', name: '{{사람1}}' }, { key: '{{키2}}', name: '{{사람2}}' }];
+const GROUPS = {};
+const QS = [];
+/*@render*/
+renderPairs('pairs');
+</script>
+</body>
+</html>

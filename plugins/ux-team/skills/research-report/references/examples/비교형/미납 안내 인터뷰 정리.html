@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미납 안내 인터뷰 정리</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>:root {
+  --paper: #ffffff;
+  --lilac: #f0ebfc;
+  --lilac-2: #e2d8f8;
+  --lilac-3: #c8b7f1;
+  --violet: #4a2a9c;
+  --violet-2: #8a70d6;
+  --ink: #1e1a2e;
+  --muted: #6b6580;
+  --line: #ece7f5;
+  --rail: 208px;
+  --gap: 56px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+  font-size: 16px; line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; border-radius: 4px; }
+.page { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+
+/* 인물 색 — 순서대로 첫째 진보라, 둘째 보라, 셋째 연보라 */
+.p1 { --pc: var(--violet); }
+.p2 { --pc: var(--violet-2); }
+.lead { --pc: var(--lilac-3); }
+.mk { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--pc); }
+
+/* 상단 내비 */
+.bar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.bar .page { display: grid; grid-template-columns: var(--rail) 1fr; gap: var(--gap); align-items: center; height: 56px; }
+.bar .title { font-weight: 700; font-size: 14px; }
+.bar nav { display: flex; gap: 28px; font-size: 14px; }
+.bar nav a { text-decoration: none; color: var(--muted); padding: 4px 0; white-space: nowrap; }
+.bar nav a:hover { color: var(--ink); }
+
+/* 섹션 그리드 — 왼쪽 레일 + 본문 */
+.sec { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); gap: var(--gap); padding: 88px 0; border-top: 1px solid var(--line); scroll-margin-top: 56px; }
+.rail { align-self: start; position: sticky; top: 96px; }
+.rail h2 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; }
+.rail p { margin: 10px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.body { max-width: 720px; }
+
+/* 표지 */
+.hero { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); gap: var(--gap); padding: 96px 0 72px; }
+.hero .kicker { font-size: 14px; color: var(--muted); line-height: 1.6; }
+.hero .kicker b { display: block; color: var(--ink); font-size: 15px; }
+.hero h1 { margin: 0; font-size: 46px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.22; max-width: 15em; }
+.hero .lede { margin: 24px 0 0; font-size: 18px; color: var(--muted); max-width: 36em; }
+.meta { display: grid; grid-template-columns: 96px 1fr; gap: 10px 20px; margin: 40px 0 0; padding: 24px 0 0; border-top: 1px solid var(--line); font-size: 14px; max-width: 720px; }
+.meta dt { color: var(--muted); }
+.meta dd { margin: 0; }
+
+.ref { color: var(--muted); font-size: 12px; margin-left: 6px; white-space: nowrap; }
+
+/* 문항 행 */
+.qa-head { font-size: 15px; font-weight: 700; color: var(--violet); padding-bottom: 10px; border-bottom: 2px solid var(--ink); }
+.row { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.num { font-size: 15px; font-weight: 700; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
+.num svg { width: 14px; height: 16px; color: var(--violet); }
+.q { margin: 0; font-weight: 600; font-size: 15px; line-height: 1.6; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--lilac); border-radius: 6px; font-size: 14px; }
+.chip.other::before { content: "기타 "; color: var(--muted); }
+.seq { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.seq .chip b { font-weight: 800; margin-right: 6px; color: var(--violet); }
+.seq .step { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.seq svg { width: 10px; height: 10px; color: var(--lilac-3); }
+.text { margin: 0; background: var(--lilac); border-left: 3px solid var(--lilac-3); border-radius: 0 8px 8px 0; white-space: pre-line; }
+.follow { color: var(--muted); margin: 10px 0 6px; }
+
+/* 비교 — 연보라 띠 위 흰 카드 */
+.band { background: var(--lilac); border-top: 1px solid var(--lilac-2); border-bottom: 1px solid var(--lilac-2); }
+.band .sec { border-top: 0; }
+.duel-head { display: grid; grid-template-columns: 1fr 64px 1fr; align-items: center; gap: 16px; margin-bottom: 20px; }
+.plate { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.plate small { display: block; font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+.plate.l { text-align: right; }
+.vs { width: 56px; height: 56px; border-radius: 50%; background: var(--violet); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 17px; justify-self: center; }
+.duel { background: var(--paper); border-radius: 14px; padding: 18px 20px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr 176px 1fr; gap: 16px; align-items: center; }
+.duel .side { font-size: 15px; font-weight: 600; line-height: 1.5; }
+.duel .side.l { text-align: right; }
+.duel .mid { text-align: center; }
+.duel .axis { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.verdict { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+.v-fit { color: var(--violet); box-shadow: inset 0 0 0 1.5px var(--violet-2); }
+.v-hot { color: #fff; background: var(--violet); }
+.duel .why { grid-column: 1 / -1; margin: 2px 0 0; padding-top: 12px; border-top: 1px dashed var(--lilac-2); font-size: 13px; color: var(--muted); text-align: center; }
+.duel.hot { box-shadow: inset 0 0 0 2px var(--violet); }
+.same { background: var(--paper); border-radius: 14px; padding: 20px 22px; margin-top: 28px; }
+.same h3 { margin: 0 0 12px; font-size: 16px; font-weight: 700; }
+.same ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 28px; font-size: 14px; }
+.same li span { display: block; color: var(--muted); font-size: 12px; }
+
+/* 결론 · 제안 */
+.verdict-line { font-weight: 800; letter-spacing: -0.025em; line-height: 1.4; }
+.roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 36px; }
+.role { border-top: 3px solid var(--pc); padding-top: 16px; }
+.role h3 { margin: 0; font-size: 18px; font-weight: 800; }
+.role .tr { font-size: 13px; color: var(--muted); margin: 2px 0 12px; }
+.role ul { margin: 0; padding: 0 0 0 16px; font-size: 14px; }
+.role li { margin: 5px 0; }
+h3.part { margin: 64px 0 16px; font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+.flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; list-style: none; margin: 0; padding: 0; counter-reset: step; }
+.flow li { background: var(--lilac); border-radius: 12px; padding: 14px 12px; font-size: 13px; display: flex; flex-direction: column; gap: 8px; counter-increment: step; }
+.flow li::before { content: counter(step); width: 24px; height: 24px; border-radius: 50%; background: var(--paper); display: grid; place-items: center; font-weight: 800; font-size: 12px; color: var(--violet); }
+.flow b { font-size: 14px; }
+.who { display: flex; flex-wrap: wrap; gap: 4px; }
+.who span { font-size: 12px; background: var(--paper); border-radius: 4px; padding: 1px 7px; }
+.decide { font-size: 11px; font-weight: 700; color: #fff; background: var(--violet); border-radius: 4px; padding: 2px 7px; align-self: flex-start; }
+.note { font-size: 13px; color: var(--muted); margin: 12px 0 0; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+thead th { background: var(--lilac); font-weight: 700; font-size: 13px; border-bottom: 0; }
+thead th:first-child { border-radius: 10px 0 0 10px; }
+thead th:last-child { border-radius: 0 10px 10px 0; }
+td:first-child { color: var(--muted); width: 32%; }
+.pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 2px 10px; border-radius: 999px; background: var(--lilac); }
+.pill.none { background: transparent; color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); font-weight: 500; }
+
+ol.rails { list-style: none; margin: 0; padding: 0; counter-reset: r; }
+ol.rails li { counter-increment: r; display: grid; grid-template-columns: 40px 1fr; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+ol.rails li::before { content: counter(r); font-size: 22px; font-weight: 800; color: var(--violet); line-height: 1.2; }
+ol.rails b { display: block; }
+ol.rails span { color: var(--muted); font-size: 14px; }
+
+.checks { list-style: none; margin: 0; padding: 0; }
+.checks li { position: relative; padding: 12px 0 12px 32px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.checks li::before { content: ""; position: absolute; left: 0; top: 16px; width: 16px; height: 16px; border-radius: 4px; box-shadow: inset 0 0 0 1.5px var(--lilac-3); }
+.checks li:last-child { border-bottom: 0; }
+
+@media (max-width: 900px) {
+  :root { --gap: 24px; }
+  .page { padding: 0 16px; }
+  .sec, .hero, .bar .page { grid-template-columns: 1fr; }
+  .bar .title { display: none; }
+  .bar nav { gap: 18px; overflow-x: auto; }
+  .rail { position: static; }
+  .hero { padding: 56px 0 40px; }
+  .hero h1 { font-size: 32px; }
+  .sec { padding: 56px 0; }
+  .roles { grid-template-columns: 1fr; }
+  .flow { grid-template-columns: 1fr 1fr; }
+  .duel { grid-template-columns: 1fr 1fr; }
+  .duel .mid { grid-column: 1 / -1; order: -1; }
+  .duel .side.l { text-align: left; }
+  .duel-head { grid-template-columns: 1fr 48px 1fr; }
+  .vs { width: 44px; height: 44px; font-size: 14px; }
+  .same ul { grid-template-columns: 1fr; }
+}
+</style>
+<style>
+/* 공유용 전용 */
+.bar nav { gap: 26px; }
+.body { max-width: 760px; }
+
+/* 두 분 나란히 — 가운데 세로선 */
+.duo { display: grid; grid-template-columns: 1fr 1fr; }
+.duo > .col { padding: 0 28px; }
+.duo > .col:first-child { padding-left: 0; }
+.duo > .col + .col { border-left: 1px solid var(--lilac-2); padding-right: 0; }
+.who-name { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
+.persona { margin: 10px 0 0; font-size: 18px; font-weight: 700; line-height: 1.45; }
+.findings { list-style: none; margin: 16px 0 0; padding: 0; font-size: 15px; }
+.findings li { position: relative; padding: 0 0 0 18px; margin: 0 0 10px; }
+.findings li::before { content: ""; position: absolute; left: 0; top: 0.7em; width: 7px; height: 7px; border-radius: 2px; background: var(--lilac-3); }
+.facts { display: grid; grid-template-columns: 1fr 1fr; margin: 22px 0 0; background: var(--lilac); border-radius: 14px; overflow: hidden; }
+.facts div { padding: 14px 16px; border-bottom: 1px solid var(--lilac-2); }
+.facts div:nth-child(odd) { border-right: 1px solid var(--lilac-2); }
+.facts div:nth-last-child(-n+2) { border-bottom: 0; }
+.facts span { display: block; color: var(--muted); font-size: 12px; }
+.facts strong { display: block; font-size: 15px; font-weight: 650; margin-top: 2px; line-height: 1.45; }
+
+/* 문항별 답변 */
+.qa-head { margin: 52px 0 0; }
+.qa-head:first-child { margin-top: 0; }
+.names { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; padding: 12px 0 0; font-size: 13px; font-weight: 700; }
+.names .col { display: flex; align-items: center; gap: 6px; }
+.pair { margin-top: 12px; }
+.pair .col::before { display: none; content: attr(data-who); font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.chip { padding: 4px 10px; line-height: 1.5; }
+.text { padding: 10px 14px; font-size: 14px; }
+.follow { font-size: 12px; }
+
+/* 제안 */
+.ask { margin: 0; font-size: 15px; color: var(--muted); }
+.verdict-line { margin: 6px 0 0; font-size: 28px; }
+
+@media (max-width: 900px) {
+  .bar nav { gap: 18px; }
+  .verdict-line { font-size: 22px; }
+}
+@media (max-width: 640px) {
+  .duo { grid-template-columns: 1fr; }
+  .duo > .col, .duo > .col + .col { padding: 0; border-left: 0; }
+  .summary .duo > .col + .col { margin-top: 36px; padding-top: 36px; border-top: 1px solid var(--lilac-2); }
+  .pair .col + .col { margin-top: 12px; }
+  .pair .col::before { display: block; }
+  .names { display: none; }
+}
+
+@page { size: A4; margin: 14mm 12mm; }
+@media print {
+  body { font-size: 13px; }
+  .bar { display: none; }
+  .page { max-width: none; padding: 0; }
+  .hero, .sec { grid-template-columns: 1fr; gap: 20px; }
+  .rail { position: static; }
+  .rail h2 { font-size: 24px; }
+  .body { max-width: none; }
+  .hero { min-height: 262mm; align-content: center; padding: 0; break-after: page; }
+  .hero h1 { font-size: 40px; }
+  .sec { padding: 0 0 24px; border-top: 0; break-before: page; }
+  .band { background: none; border: 0; }
+  .band .body { background: var(--lilac); border-radius: 16px; padding: 20px; }
+  .row, .duel, .same, .role, .flow li, ol.rails li, .checks li, .facts, table, .findings li { break-inside: avoid; }
+  .qa-head { break-after: avoid; }
+  .names { break-after: avoid; }
+  h3.part { margin-top: 36px; break-after: avoid; }
+  .flow { grid-template-columns: repeat(3, 1fr); }
+  .roles { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .same ul { grid-template-columns: 1fr 1fr; }
+  .persona { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="page">
+    <span class="title">미납 안내 인터뷰 정리</span>
+    <nav aria-label="섹션">
+      <a href="#summary">요약</a>
+      <a href="#answers">문항별 답변</a>
+      <a href="#compare">비교</a>
+      <a href="#support">먼저 살펴볼 것</a>
+      <a href="#proposal">개선 방향 제안</a>
+    </nav>
+  </div>
+</div>
+
+<main class="page">
+
+  <header class="hero">
+    <div class="kicker"><b>미납 안내 인터뷰 정리 (가상 예시)</b>2026년 10월 2일 응답</div>
+    <div>
+      <h1>A학원은 문자로 먼저 알리고, B학원은 전화로 먼저 확인합니다.</h1>
+      <p class="lede">A학원은 학부모님이 부담 없도록 문자로 돌려서 알리고, B학원은 금액과 날짜를 전화로 정확히 짚습니다. 방식은 달라도 두 분 모두 두 번째 안내에서 지난 연락 내용을 다시 찾는 데 시간을 씁니다.</p>
+      <dl class="meta">
+        <dt>대상</dt><dd>A학원&nbsp;원장님, B학원&nbsp;원장님 (가상 응답자)</dd>
+        <dt>자료</dt><dd>같은 질문 리스트로 진행한 1:1 인터뷰 메모 2건</dd>
+        <dt>이 문서는</dt><dd>두 학원이 미납을 어떻게 안내하는지 정리했습니다. 미납 안내 화면의 개선 방향을 정할 때 참고하려고 만들었습니다. 문장 끝의 숫자는 근거가 된 문항 번호입니다.</dd>
+      </dl>
+    </div>
+  </header>
+
+  <section class="sec summary" id="summary" aria-labelledby="h-summary">
+    <div class="rail">
+      <h2 id="h-summary">요약</h2>
+      <p>답변으로 본 두 분의 미납 안내 방식입니다.</p>
+    </div>
+    <div class="body duo">
+      <div class="col">
+        <div class="who-name"><i class="mk p1"></i>A학원&nbsp;원장님</div>
+        <p class="persona">장부부터 정리하고, 문자로 부드럽게 먼저 알립니다</p>
+        <ul class="findings">
+          <li>매달 장부를 정리할 때 미납을 한꺼번에 확인합니다.<span class="ref">1</span></li>
+          <li>학부모님이 부담스럽지 않도록 문자로 먼저, 돌려서 안내합니다.<span class="ref">2, 8</span></li>
+          <li>써 둔 문구를 복사해 쓰고, 지난 안내 내용은 문자함에서 다시 찾습니다.<span class="ref">7, 9</span></li>
+        </ul>
+        <div class="facts">
+          <div><span>미납 확인 시점</span><strong>매달 5일 장부 정리 때</strong></div>
+          <div><span>첫 연락 수단</span><strong>휴대폰 문자</strong></div>
+          <div><span>안내하는 사람</span><strong>원장님 직접</strong></div>
+          <div><span>한 달 안내 건수</span><strong>10건 안팎</strong></div>
+          <div><span>다시 안내</span><strong>일주일 뒤 문자, 그다음 전화</strong></div>
+          <div><span>납부 약속 기록</span><strong>따로 남기지 않음</strong></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="who-name"><i class="mk p2"></i>B학원&nbsp;원장님</div>
+        <p class="persona">매일 입금을 확인하고, 전화로 정확하게 짚습니다</p>
+        <ul class="findings">
+          <li>매일 아침 입금 내역을 보고 결제일 다음 날 바로 연락합니다.<span class="ref">1</span></li>
+          <li>금액과 날짜를 정확히 전하려고 전화를 먼저 씁니다.<span class="ref">2, 8</span></li>
+          <li>첫 연락은 실장님, 두 번째부터는 원장님이 나눠서 맡습니다.<span class="ref">3, 6</span></li>
+        </ul>
+        <div class="facts">
+          <div><span>미납 확인 시점</span><strong>결제일 다음 날</strong></div>
+          <div><span>첫 연락 수단</span><strong>학원 전화</strong></div>
+          <div><span>안내하는 사람</span><strong>실장님, 두 번째부터 원장님</strong></div>
+          <div><span>한 달 안내 건수</span><strong>3~4건</strong></div>
+          <div><span>다시 안내</span><strong>사흘 뒤 원장님 전화</strong></div>
+          <div><span>납부 약속 기록</span><strong>통화 노트에 날짜</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="answers" aria-labelledby="h-answers">
+    <div class="rail">
+      <h2 id="h-answers">문항별 답변</h2>
+      <p>12개 문항에 두 분이 적은 답을 그대로 옮겨 나란히 두었습니다.</p>
+    </div>
+    <div class="body" id="pairs"></div>
+  </section>
+</main>
+
+<div class="band">
+  <div class="page">
+    <section class="sec" id="compare" aria-labelledby="h-compare">
+      <div class="rail">
+        <h2 id="h-compare">비교</h2>
+        <p>같은 질문에 서로 다르게 답한 항목입니다. 진한 배지는 인터뷰에서 함께 정하고 싶은 부분입니다.</p>
+      </div>
+      <div class="body">
+        <div class="duel-head" aria-hidden="true">
+          <div class="plate l">A학원&nbsp;원장님<small>문자로 먼저 알리는 편</small></div>
+          <div class="vs">VS</div>
+          <div class="plate">B학원&nbsp;원장님<small>전화로 먼저 확인하는 편</small></div>
+        </div>
+
+        <div class="duel">
+          <div class="side l">매달 장부 정리 때</div>
+          <div class="mid"><span class="axis">미납 확인 시점 (1)</span><span class="verdict v-fit">보완</span></div>
+          <div class="side">결제일 다음 날</div>
+          <p class="why">확인하는 주기는 달라도, 결제일이 지난 학생을 한 번에 모아 보는 화면이면 두 방식 모두에 맞습니다.</p>
+        </div>
+
+        <div class="duel hot">
+          <div class="side l">휴대폰 문자, 한 분씩</div>
+          <div class="mid"><span class="axis">첫 연락 수단 (2, 5)</span><span class="verdict v-hot">함께 정할 것</span></div>
+          <div class="side">학원 전화</div>
+          <p class="why">첫 안내를 문자와 전화 중에서 학원이 고를 수 있게 하면 어떨까요?</p>
+        </div>
+
+        <div class="duel">
+          <div class="side l">원장님 혼자</div>
+          <div class="mid"><span class="axis">안내하는 사람 (3)</span><span class="verdict v-fit">보완</span></div>
+          <div class="side">실장님, 그다음 원장님</div>
+          <p class="why">안내를 나눠 맡는 학원에서는 누가 어디까지 연락했는지 함께 보여야 합니다.</p>
+        </div>
+
+        <div class="duel hot">
+          <div class="side l">기분 상하지 않게 돌려서</div>
+          <div class="mid"><span class="axis">문구에서 신경 쓰는 점 (8, 9)</span><span class="verdict v-hot">함께 정할 것</span></div>
+          <div class="side">금액과 날짜를 정확하게</div>
+          <p class="why">부드러운 문구에 금액과 날짜가 자동으로 들어가는 기본 문구를 두면 어떨까요?</p>
+        </div>
+
+        <div class="duel">
+          <div class="side l">자주 있었음</div>
+          <div class="mid"><span class="axis">문자 읽음 확인 (10)</span><span class="verdict v-fit">보완</span></div>
+          <div class="side">가끔 있었음</div>
+          <p class="why">문자로 먼저 안내하는 학원일수록 읽었는지 확인할 일이 많습니다.</p>
+        </div>
+
+        <div class="duel hot">
+          <div class="side l">따로 남기지 않음</div>
+          <div class="mid"><span class="axis">납부 약속 기록 (11)</span><span class="verdict v-hot">함께 정할 것</span></div>
+          <div class="side">통화 노트에 날짜</div>
+          <p class="why">학부모님이 말한 납부 예정일을 안내 기록 옆에 남기는 자리를 두면 어떨까요?</p>
+        </div>
+
+        <div class="same">
+          <h3>두 분의 공통점</h3>
+          <ul>
+            <li><span>두 번째 안내의 어려움 (7)</span>두 분 모두 지난 연락 내용을 다시 찾는 데 시간이 듭니다.</li>
+            <li><span>다시 안내하기까지 (6)</span>두 분 모두 며칠을 두고 한 번 더 연락합니다.</li>
+            <li><span>첫 연락을 고르는 이유 (2)</span>두 분 모두 학부모님이 받기 편한 방법을 고릅니다.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<main class="page">
+  <section class="sec" id="support" aria-labelledby="h-support">
+    <div class="rail">
+      <h2 id="h-support">먼저 살펴볼 것</h2>
+      <p>두 분이 함께 시간을 쓰는 곳부터 놓았습니다. 만들기로 정한 목록이 아니라 먼저 살펴볼 순서입니다.</p>
+    </div>
+    <div class="body">
+      <ol class="rails">
+        <li><div><b>지난 안내 내용을 한곳에서 보기</b><span>두 분 모두 두 번째 안내 전에 지난 연락을 찾느라 시간이 듭니다. (7, 11)</span></div></li>
+        <li><div><b>납부 예정일 남기기</b><span>학부모님이 말한 날짜를 A학원은 문자에, B학원은 노트에 남기고 있습니다. (11)</span></div></li>
+        <li><div><b>첫 안내 수단 고르기</b><span>문자와 전화 중 무엇을 먼저 쓰는지 학원마다 다릅니다. (2, 5)</span></div></li>
+        <li><div><b>기본 안내 문구</b><span>부드러운 표현과 정확한 금액, 날짜를 함께 담는 문구가 필요한지 여쭤봅니다. (8, 9)</span></div></li>
+        <li><div><b>문자 읽음 확인</b><span>문자로 먼저 안내하는 학원에서 특히 자주 필요합니다. (10)</span></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec" id="proposal" aria-labelledby="h-proposal">
+    <div class="rail">
+      <h2 id="h-proposal">개선 방향 제안</h2>
+      <p>두 분의 답을 바탕으로 한 개선 방향입니다. 확정된 내용은 아닙니다.</p>
+    </div>
+    <div class="body">
+      <p class="ask">이런 흐름은 어떨까요?</p>
+      <p class="verdict-line">미납 안내를 한 화면에서 이어서 보고, 다음 안내를 지난 기록 위에서 시작합니다.</p>
+
+      <h3 class="part">미납 안내 흐름</h3>
+      <ol class="flow">
+        <li><b>미납 확인</b><div class="who"><span>원장님</span><span>실장님</span></div></li>
+        <li><b>첫 안내 수단</b><span class="decide">수단: 원장님</span><div class="who"><span>원장님</span></div></li>
+        <li><b>첫 안내</b><div class="who"><span>원장님</span><span>실장님</span></div></li>
+        <li><b>납부 예정일 기록</b><div class="who"><span>안내한 사람</span></div></li>
+        <li><b>다시 안내</b><span class="decide">날짜: 원장님</span><div class="who"><span>원장님</span></div></li>
+        <li><b>납부 확인</b><div class="who"><span>원장님</span><span>실장님</span></div></li>
+      </ol>
+      <p class="note">두 분 모두 두 번째 안내에서 지난 기록을 다시 찾았기 때문에, 납부 예정일 기록을 첫 안내 바로 뒤에 두었습니다.</p>
+
+      <h3 class="part">지금 안내하는 방식</h3>
+      <table>
+        <thead><tr><th>기준</th><th>A학원&nbsp;원장님</th><th>B학원&nbsp;원장님</th></tr></thead>
+        <tbody>
+          <tr><td>첫 안내</td><td><span class="pill">문자</span></td><td><span class="pill">전화</span></td></tr>
+          <tr><td>다시 안내</td><td><span class="pill">문자 뒤 전화</span></td><td><span class="pill">원장님 전화</span></td></tr>
+          <tr><td>납부 약속 기록</td><td><span class="pill none">따로 없음</span></td><td><span class="pill">통화 노트</span></td></tr>
+        </tbody>
+      </table>
+      <p class="note">인터뷰에서 들은 지금 방식만 적었습니다.</p>
+
+      <h3 class="part">함께 이야기할 것</h3>
+      <ul class="checks">
+        <li>첫 안내를 문자와 전화 중에서 학원이 고를 수 있으면 충분할까요? (2, 5)</li>
+        <li>기본 문구에 금액과 날짜가 자동으로 들어가면 부담스럽게 느껴질까요? (8)</li>
+        <li>납부 예정일은 어디에 남기면 다시 찾기 편할까요? (11)</li>
+        <li>미납 안내가 자동으로 나간다면 어떨 것 같으신가요? B학원&nbsp;원장님께는 여쭤보지 못했습니다. (12)</li>
+        <li>위 흐름이 두 분이 실제로 안내하는 순서와 맞을까요?</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="bm" viewBox="0 0 14 16"><path d="M2 1h10v14l-5-3.5L2 15z" fill="currentColor"/></symbol>
+  <symbol id="chev" viewBox="0 0 10 10"><path d="M3 1.5 6.5 5 3 8.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<script>
+const PEOPLE = [{ key: 'a', name: 'A학원 원장님' }, { key: 'b', name: 'B학원 원장님' }];
+const GROUPS = {"G0": "지금 미납을 안내하는 방식: 확인과 첫 연락", "G1": "지금 미납을 안내하는 방식: 두 번째 안내", "G2": "안내 문자에 대한 생각: 문구", "G3": "안내 문자에 대한 생각: 확인"};
+const QS = [
+  {"n": 1, "g": "G0", "q": "미납을 처음 알게 되는 건 보통 언제인가요?", "a": {"a": "매달 5일에 장부 정리하면서요\n결제일 지나고 일주일쯤 됐을 때"}, "b": {"a": "결제일 다음 날 바로요. 매일 아침 입금 내역을 봐요"}},
+  {"n": 2, "g": "G0", "q": "미납을 알게 되면 처음 하는 일은 무엇인가요?", "a": {"a": "문자 먼저 보내요. 전화는 부담스러워 하시는 분들이 많아서"}, "b": {"a": "전화요. 문자는 잘 안 읽으시는 것 같아서"}},
+  {"n": 3, "g": "G0", "q": "안내는 누가 하나요?", "a": {"a": "제가 직접요. 실장님이 따로 없어요"}, "b": {"a": "첫 연락은 실장님이 하고, 두 번째부터 제가 해요"}},
+  {"n": 4, "g": "G0", "q": "한 달에 미납 안내를 몇 건 정도 하나요?", "a": {"a": "10건 안팎"}, "b": {"a": "3~4건"}},
+  {"n": 5, "g": "G0", "q": "안내할 때 쓰는 도구는 무엇인가요?", "a": {"a": "제 휴대폰 문자요. 단체문자는 안 쓰고 한 분씩"}, "b": {"a": "학원 전화기\n통화한 내용은 노트에 적어요"}},
+  {"n": 6, "g": "G1", "q": "첫 안내 후에도 납부가 없으면 어떻게 하나요?", "a": {"a": "일주일 뒤에 문자 한 번 더, 그래도 없으면 그때 전화"}, "b": {"a": "사흘 뒤에 원장인 제가 다시 전화해요"}},
+  {"n": 7, "g": "G1", "q": "두 번째 안내에서 가장 어려운 점은 무엇인가요?", "a": {"a": "지난번에 뭐라고 보냈는지 기억이 안 나요.. 문자함 한참 뒤져봄"}, "b": {"a": "언제 내신다고 했는지 적어둔 메모를 못 찾을 때요"}},
+  {"n": 8, "g": "G2", "q": "안내 문자를 쓸 때 가장 신경 쓰는 점은 무엇인가요?", "a": {"a": "학부모님 기분 상하지 않게 돌려서 씁니다\n\"확인 부탁드립니다\" 정도로만"}, "b": {"a": "금액이랑 날짜를 정확하게요. 틀리면 더 곤란해져요"}},
+  {"n": 9, "g": "G2", "q": "문자 문구는 매번 새로 쓰나요?", "a": {"a": "메모장에 써둔 걸 복사해서 이름만 바꿔요"}, "b": {"a": "문자는 거의 안 보내서.. 보낼 때는 새로 써요"}},
+  {"n": 10, "g": "G3", "q": "문자를 보낸 뒤 읽었는지 확인하고 싶었던 적이 있나요?", "a": {"a": "자주요. 읽었는지 몰라서 다음 날 또 전화한 적도 있어요"}, "b": {"a": "가끔요"}},
+  {"n": 11, "g": "G3", "q": "학부모님이 답장으로 언제 내겠다고 하면 그 내용은 어디에 남기나요?", "a": {"a": "따로 안 남겨요. 문자에 남아 있으니까"}, "b": {"a": "통화 노트에 날짜를 적어둬요"}},
+  {"n": 12, "g": "G3", "q": "미납 안내가 자동으로 나간다면 어떨 것 같나요?", "a": {"a": "좋을 것 같은데 문구는 제가 고를 수 있어야 해요"}},
+];
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const chev = '<svg aria-hidden="true"><use href="#chev"/></svg>';
+const bm = '<svg aria-hidden="true"><use href="#bm"/></svg>';
+
+function answer(q, r) {
+  if (!r) return '<p class="follow">답하지 않음</p>';
+  if (r.seq) {
+    return `<div class="seq">${r.seq.map((k, i) => `<span class="step"><span class="chip"><b>${k}</b>${esc(q.opts[k])}</span>${i < r.seq.length - 1 ? chev : ''}</span>`).join('')}</div>`;
+  }
+  let html = Array.isArray(r.a)
+    ? `<div class="chips">${r.a.map((c) => `<span class="chip">${esc(c)}</span>`).join('')}${r.o ? `<span class="chip other">${esc(r.o)}</span>` : ''}</div>`
+    : `<p class="text">${esc(r.a)}</p>`;
+  if (r.x) html += `${q.xq ? `<p class="follow">${esc(q.xq)}</p>` : ''}<p class="text">${esc(r.x)}</p>`;
+  return html;
+}
+
+function row(q, inner) {
+  return `<div class="row">
+    <div class="num">${q.n}${q.star ? bm : ''}</div>
+    <div><p class="q">${esc(q.q)}</p>${inner}</div>
+  </div>`;
+}
+
+function renderSolo(id, key) {
+  let html = '';
+  let group = '';
+  for (const q of QS) {
+    if (q.g !== group) {
+      group = q.g;
+      if (q.g) html += `<h3 class="qa-head">${esc(GROUPS[q.g])}</h3>`;
+    }
+    html += row(q, `<div class="a">${answer(q, q[key])}</div>`);
+  }
+  document.getElementById(id).innerHTML = html;
+}
+
+function renderPairs(id) {
+  const [a, b] = PEOPLE;
+  const names = `<div class="names" aria-hidden="true"><span></span><div class="duo"><div class="col"><i class="mk p1"></i>${esc(a.name)}</div><div class="col"><i class="mk p2"></i>${esc(b.name)}</div></div></div>`;
+  let html = '';
+  let group = '';
+  for (const q of QS) {
+    if (q.g !== group) {
+      group = q.g;
+      if (q.g) html += `<h3 class="qa-head">${esc(GROUPS[q.g])}</h3>`;
+      html += names;
+    }
+    html += row(q, `<div class="pair duo">
+      <div class="col" data-who="${esc(a.name)}">${answer(q, q[a.key])}</div>
+      <div class="col" data-who="${esc(b.name)}">${answer(q, q[b.key])}</div>
+    </div>`);
+  }
+  document.getElementById(id).innerHTML = html;
+}
+
+renderPairs('pairs');
+</script>
+</body>
+</html>

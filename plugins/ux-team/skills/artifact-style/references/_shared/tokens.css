@@ -1,0 +1,49 @@
+/* UX팀 공용 토큰. 원본은 이 파일 하나다.
+   팀 색은 cmux 작업공간 이름 색을 따른다 (10/14 사용자 지정, docs/00-명세.md DEC-15).
+     강조 = cmux Magenta #AD1457 · 창욱 = cmux Indigo #283593 · 유진 = cmux Amber #7D6608 · 주은 = gray
+   다크 값은 같은 색상의 밝은 단계로 맞췄다.
+   서체는 Pretendard · D2Coding을 먼저 쓴다. 둘 다 Google Fonts에 없어 보는 사람 PC에 설치돼 있을 때만 보인다.
+   설치하지 않은 사람에게는 Google Fonts의 IBM Plex로 보인다. 페이지에 아래 링크를 함께 둔다:
+   https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap
+   mono는 코드 · 경로 · 숫자에만 쓴다. 한글 라벨에 쓰면 공백이 넓어 글자가 벌어져 보인다. */
+:root {
+  --bg: #f4f4f7;
+  --surface: #ffffff;
+  --ink: #1d1c24;
+  --muted: #5d5b6b;
+  --rule: #d9d8e2;
+  --hatch: #e3e2ec;
+  --accent: #ad1457;
+  --accent-ink: #880e4f;
+  --accent-soft: #fce4ec;
+  --warn: #b8381f;
+  --line-cw: #283593;
+  --line-cw-ink: #283593;
+  --line-yu: #7d6608;
+  --line-yu-ink: #7d6608;
+  --line-ju: #6b7280;
+  --line-ju-ink: #4b5563;
+  --shadow: 0 8px 28px rgba(29, 28, 36, .14);
+  --radius-card: 12px;
+  --radius-chip: 5px;
+  --font-body: "Pretendard Variable", "Pretendard", "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "D2Coding", "IBM Plex Mono", "IBM Plex Sans KR", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15141b; --surface: #201f28; --ink: #ecebf3; --muted: #a4a2b4; --rule: #363443; --hatch: #2c2a37;
+    --accent: #f06292; --accent-ink: #f48fb1; --accent-soft: #3a1a2a; --warn: #ff7f6a;
+    --line-cw: #7986cb; --line-cw-ink: #9fa8da; --line-yu: #f1c40f; --line-yu-ink: #f7dc6f; --line-ju: #9ca3af; --line-ju-ink: #d1d5db;
+    --shadow: 0 8px 28px rgba(0, 0, 0, .5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15141b; --surface: #201f28; --ink: #ecebf3; --muted: #a4a2b4; --rule: #363443; --hatch: #2c2a37;
+  --accent: #f06292; --accent-ink: #f48fb1; --accent-soft: #3a1a2a; --warn: #ff7f6a;
+  --line-cw: #7986cb; --line-cw-ink: #9fa8da; --line-yu: #f1c40f; --line-yu-ink: #f7dc6f; --line-ju: #9ca3af; --line-ju-ink: #d1d5db;
+  --shadow: 0 8px 28px rgba(0, 0, 0, .5);
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); line-height: 1.6; word-break: keep-all; overflow-wrap: break-word; }

@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>출결 화면 현장 테스트 정리</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>:root {
+  --paper: #ffffff;
+  --lilac: #f0ebfc;
+  --lilac-2: #e2d8f8;
+  --lilac-3: #c8b7f1;
+  --violet: #4a2a9c;
+  --violet-2: #8a70d6;
+  --ink: #1e1a2e;
+  --muted: #6b6580;
+  --line: #ece7f5;
+  --rail: 208px;
+  --gap: 56px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+  font-size: 16px; line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; border-radius: 4px; }
+.page { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+
+/* 인물 색 — 순서대로 첫째 진보라, 둘째 보라, 셋째 연보라 */
+.p1 { --pc: var(--violet); }
+.p2 { --pc: var(--violet-2); }
+.lead { --pc: var(--lilac-3); }
+.mk { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--pc); }
+
+/* 상단 내비 */
+.bar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.bar .page { display: grid; grid-template-columns: var(--rail) 1fr; gap: var(--gap); align-items: center; height: 56px; }
+.bar .title { font-weight: 700; font-size: 14px; }
+.bar nav { display: flex; gap: 28px; font-size: 14px; }
+.bar nav a { text-decoration: none; color: var(--muted); padding: 4px 0; white-space: nowrap; }
+.bar nav a:hover { color: var(--ink); }
+
+/* 섹션 그리드 — 왼쪽 레일 + 본문 */
+.sec { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); gap: var(--gap); padding: 88px 0; border-top: 1px solid var(--line); scroll-margin-top: 56px; }
+.rail { align-self: start; position: sticky; top: 96px; }
+.rail h2 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; }
+.rail p { margin: 10px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.body { max-width: 720px; }
+
+/* 표지 */
+.hero { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); gap: var(--gap); padding: 96px 0 72px; }
+.hero .kicker { font-size: 14px; color: var(--muted); line-height: 1.6; }
+.hero .kicker b { display: block; color: var(--ink); font-size: 15px; }
+.hero h1 { margin: 0; font-size: 46px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.22; max-width: 15em; }
+.hero .lede { margin: 24px 0 0; font-size: 18px; color: var(--muted); max-width: 36em; }
+.meta { display: grid; grid-template-columns: 96px 1fr; gap: 10px 20px; margin: 40px 0 0; padding: 24px 0 0; border-top: 1px solid var(--line); font-size: 14px; max-width: 720px; }
+.meta dt { color: var(--muted); }
+.meta dd { margin: 0; }
+
+.ref { color: var(--muted); font-size: 12px; margin-left: 6px; white-space: nowrap; }
+
+/* 문항 행 */
+.qa-head { font-size: 15px; font-weight: 700; color: var(--violet); padding-bottom: 10px; border-bottom: 2px solid var(--ink); }
+.row { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.num { font-size: 15px; font-weight: 700; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
+.num svg { width: 14px; height: 16px; color: var(--violet); }
+.q { margin: 0; font-weight: 600; font-size: 15px; line-height: 1.6; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--lilac); border-radius: 6px; font-size: 14px; }
+.chip.other::before { content: "기타 "; color: var(--muted); }
+.seq { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.seq .chip b { font-weight: 800; margin-right: 6px; color: var(--violet); }
+.seq .step { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.seq svg { width: 10px; height: 10px; color: var(--lilac-3); }
+.text { margin: 0; background: var(--lilac); border-left: 3px solid var(--lilac-3); border-radius: 0 8px 8px 0; white-space: pre-line; }
+.follow { color: var(--muted); margin: 10px 0 6px; }
+
+/* 비교 — 연보라 띠 위 흰 카드 */
+.band { background: var(--lilac); border-top: 1px solid var(--lilac-2); border-bottom: 1px solid var(--lilac-2); }
+.band .sec { border-top: 0; }
+.duel-head { display: grid; grid-template-columns: 1fr 64px 1fr; align-items: center; gap: 16px; margin-bottom: 20px; }
+.plate { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.plate small { display: block; font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+.plate.l { text-align: right; }
+.vs { width: 56px; height: 56px; border-radius: 50%; background: var(--violet); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 17px; justify-self: center; }
+.duel { background: var(--paper); border-radius: 14px; padding: 18px 20px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr 176px 1fr; gap: 16px; align-items: center; }
+.duel .side { font-size: 15px; font-weight: 600; line-height: 1.5; }
+.duel .side.l { text-align: right; }
+.duel .mid { text-align: center; }
+.duel .axis { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.verdict { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+.v-fit { color: var(--violet); box-shadow: inset 0 0 0 1.5px var(--violet-2); }
+.v-hot { color: #fff; background: var(--violet); }
+.duel .why { grid-column: 1 / -1; margin: 2px 0 0; padding-top: 12px; border-top: 1px dashed var(--lilac-2); font-size: 13px; color: var(--muted); text-align: center; }
+.duel.hot { box-shadow: inset 0 0 0 2px var(--violet); }
+.same { background: var(--paper); border-radius: 14px; padding: 20px 22px; margin-top: 28px; }
+.same h3 { margin: 0 0 12px; font-size: 16px; font-weight: 700; }
+.same ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 28px; font-size: 14px; }
+.same li span { display: block; color: var(--muted); font-size: 12px; }
+
+/* 결론 · 제안 */
+.verdict-line { font-weight: 800; letter-spacing: -0.025em; line-height: 1.4; }
+.roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 36px; }
+.role { border-top: 3px solid var(--pc); padding-top: 16px; }
+.role h3 { margin: 0; font-size: 18px; font-weight: 800; }
+.role .tr { font-size: 13px; color: var(--muted); margin: 2px 0 12px; }
+.role ul { margin: 0; padding: 0 0 0 16px; font-size: 14px; }
+.role li { margin: 5px 0; }
+h3.part { margin: 64px 0 16px; font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+.flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; list-style: none; margin: 0; padding: 0; counter-reset: step; }
+.flow li { background: var(--lilac); border-radius: 12px; padding: 14px 12px; font-size: 13px; display: flex; flex-direction: column; gap: 8px; counter-increment: step; }
+.flow li::before { content: counter(step); width: 24px; height: 24px; border-radius: 50%; background: var(--paper); display: grid; place-items: center; font-weight: 800; font-size: 12px; color: var(--violet); }
+.flow b { font-size: 14px; }
+.who { display: flex; flex-wrap: wrap; gap: 4px; }
+.who span { font-size: 12px; background: var(--paper); border-radius: 4px; padding: 1px 7px; }
+.decide { font-size: 11px; font-weight: 700; color: #fff; background: var(--violet); border-radius: 4px; padding: 2px 7px; align-self: flex-start; }
+.note { font-size: 13px; color: var(--muted); margin: 12px 0 0; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+thead th { background: var(--lilac); font-weight: 700; font-size: 13px; border-bottom: 0; }
+thead th:first-child { border-radius: 10px 0 0 10px; }
+thead th:last-child { border-radius: 0 10px 10px 0; }
+td:first-child { color: var(--muted); width: 32%; }
+.pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 2px 10px; border-radius: 999px; background: var(--lilac); }
+.pill.none { background: transparent; color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); font-weight: 500; }
+
+ol.rails { list-style: none; margin: 0; padding: 0; counter-reset: r; }
+ol.rails li { counter-increment: r; display: grid; grid-template-columns: 40px 1fr; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+ol.rails li::before { content: counter(r); font-size: 22px; font-weight: 800; color: var(--violet); line-height: 1.2; }
+ol.rails b { display: block; }
+ol.rails span { color: var(--muted); font-size: 14px; }
+
+.checks { list-style: none; margin: 0; padding: 0; }
+.checks li { position: relative; padding: 12px 0 12px 32px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.checks li::before { content: ""; position: absolute; left: 0; top: 16px; width: 16px; height: 16px; border-radius: 4px; box-shadow: inset 0 0 0 1.5px var(--lilac-3); }
+.checks li:last-child { border-bottom: 0; }
+
+@media (max-width: 900px) {
+  :root { --gap: 24px; }
+  .page { padding: 0 16px; }
+  .sec, .hero, .bar .page { grid-template-columns: 1fr; }
+  .bar .title { display: none; }
+  .bar nav { gap: 18px; overflow-x: auto; }
+  .rail { position: static; }
+  .hero { padding: 56px 0 40px; }
+  .hero h1 { font-size: 32px; }
+  .sec { padding: 56px 0; }
+  .roles { grid-template-columns: 1fr; }
+  .flow { grid-template-columns: 1fr 1fr; }
+  .duel { grid-template-columns: 1fr 1fr; }
+  .duel .mid { grid-column: 1 / -1; order: -1; }
+  .duel .side.l { text-align: left; }
+  .duel-head { grid-template-columns: 1fr 48px 1fr; }
+  .vs { width: 44px; height: 44px; font-size: 14px; }
+  .same ul { grid-template-columns: 1fr; }
+}
+</style>
+<style>
+/* 공유용 전용 */
+.bar nav { gap: 26px; }
+.body { max-width: 760px; }
+
+/* 두 분 나란히 — 가운데 세로선 */
+.duo { display: grid; grid-template-columns: 1fr 1fr; }
+.duo > .col { padding: 0 28px; }
+.duo > .col:first-child { padding-left: 0; }
+.duo > .col + .col { border-left: 1px solid var(--lilac-2); padding-right: 0; }
+.who-name { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
+.persona { margin: 10px 0 0; font-size: 18px; font-weight: 700; line-height: 1.45; }
+.findings { list-style: none; margin: 16px 0 0; padding: 0; font-size: 15px; }
+.findings li { position: relative; padding: 0 0 0 18px; margin: 0 0 10px; }
+.findings li::before { content: ""; position: absolute; left: 0; top: 0.7em; width: 7px; height: 7px; border-radius: 2px; background: var(--lilac-3); }
+.facts { display: grid; grid-template-columns: 1fr 1fr; margin: 22px 0 0; background: var(--lilac); border-radius: 14px; overflow: hidden; }
+.facts div { padding: 14px 16px; border-bottom: 1px solid var(--lilac-2); }
+.facts div:nth-child(odd) { border-right: 1px solid var(--lilac-2); }
+.facts div:nth-last-child(-n+2) { border-bottom: 0; }
+.facts span { display: block; color: var(--muted); font-size: 12px; }
+.facts strong { display: block; font-size: 15px; font-weight: 650; margin-top: 2px; line-height: 1.45; }
+
+/* 문항별 답변 */
+.qa-head { margin: 52px 0 0; }
+.qa-head:first-child { margin-top: 0; }
+.names { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; padding: 12px 0 0; font-size: 13px; font-weight: 700; }
+.names .col { display: flex; align-items: center; gap: 6px; }
+.pair { margin-top: 12px; }
+.pair .col::before { display: none; content: attr(data-who); font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.chip { padding: 4px 10px; line-height: 1.5; }
+.text { padding: 10px 14px; font-size: 14px; }
+.follow { font-size: 12px; }
+
+/* 제안 */
+.ask { margin: 0; font-size: 15px; color: var(--muted); }
+.verdict-line { margin: 6px 0 0; font-size: 28px; }
+
+@media (max-width: 900px) {
+  .bar nav { gap: 18px; }
+  .verdict-line { font-size: 22px; }
+}
+@media (max-width: 640px) {
+  .duo { grid-template-columns: 1fr; }
+  .duo > .col, .duo > .col + .col { padding: 0; border-left: 0; }
+  .summary .duo > .col + .col { margin-top: 36px; padding-top: 36px; border-top: 1px solid var(--lilac-2); }
+  .pair .col + .col { margin-top: 12px; }
+  .pair .col::before { display: block; }
+  .names { display: none; }
+}
+
+@page { size: A4; margin: 14mm 12mm; }
+@media print {
+  body { font-size: 13px; }
+  .bar { display: none; }
+  .page { max-width: none; padding: 0; }
+  .hero, .sec { grid-template-columns: 1fr; gap: 20px; }
+  .rail { position: static; }
+  .rail h2 { font-size: 24px; }
+  .body { max-width: none; }
+  .hero { min-height: 262mm; align-content: center; padding: 0; break-after: page; }
+  .hero h1 { font-size: 40px; }
+  .sec { padding: 0 0 24px; border-top: 0; break-before: page; }
+  .band { background: none; border: 0; }
+  .band .body { background: var(--lilac); border-radius: 16px; padding: 20px; }
+  .row, .duel, .same, .role, .flow li, ol.rails li, .checks li, .facts, table, .findings li { break-inside: avoid; }
+  .qa-head { break-after: avoid; }
+  .names { break-after: avoid; }
+  h3.part { margin-top: 36px; break-after: avoid; }
+  .flow { grid-template-columns: repeat(3, 1fr); }
+  .roles { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .same ul { grid-template-columns: 1fr 1fr; }
+  .persona { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="page">
+    <span class="title">출결 화면 현장 테스트 정리</span>
+    <nav aria-label="섹션">
+      <a href="#summary">요약</a>
+      <a href="#answers">문항별 답변</a>
+      <a href="#compare">비교</a>
+      <a href="#support">먼저 살펴볼 것</a>
+      <a href="#proposal">개선 방향 제안</a>
+    </nav>
+  </div>
+</div>
+
+<main class="page">
+
+  <header class="hero">
+    <div class="kicker"><b>출결 화면 현장 테스트 정리 (가상 예시)</b>2026년 10월 7일 방문</div>
+    <div>
+      <h1>출석은 종이가 더 빨랐고, 현장은 안 온 학생을 먼저 보고 싶어 합니다.</h1>
+      <p class="lede">몰리는 시간에는 종이 출석부가 한 명에 2~3초로, 이름을 검색해야 하는 새 화면보다 빨랐습니다. 대신 새 화면에서 늦은 학생의 도착 시간이 자동으로 찍히고 안 온 학생이 바로 보이는 점을 반겼습니다.</p>
+      <dl class="meta">
+        <dt>대상</dt><dd>C학원 데스크 담당 실장님 (가상 응답자)</dd>
+        <dt>자료</dt><dd>현장 테스트 질문 리스트와 녹음 요약</dd>
+        <dt>현장 환경</dt><dd>데스크에는 실장님 한 분이 오후 2시부터 9시까지 있습니다. 데스크톱 PC 1대가 있고 태블릿은 없습니다. 초등 60명이 3시~6시에 몰립니다.</dd>
+        <dt>이 문서는</dt><dd>지금 쓰는 종이 출석부를 먼저 관찰하고, 이어서 새 출결 화면을 써 본 반응을 순서대로 정리했습니다. 종이 출석부와 새 출결 화면을 나란히 놓은 것은 같은 질문을 두고 답이 갈린 곳뿐입니다. 출결 화면의 개선 방향을 정할 때 참고하려고 만들었습니다. 문장 끝의 숫자는 근거가 된 문항 번호입니다.</dd>
+      </dl>
+    </div>
+  </header>
+
+  <section class="sec summary" id="summary" aria-labelledby="h-summary">
+    <div class="rail">
+      <h2 id="h-summary">요약</h2>
+      <p>종이 출석부와 새 출결 화면을 따로 정리했습니다. 같은 줄에 있어도 서로 짝지은 내용은 아닙니다.</p>
+    </div>
+    <div class="body duo">
+      <div class="col">
+        <div class="who-name"><i class="mk p1"></i>종이 출석부</div>
+        <p class="persona">빠르게 체크하고, 기록은 여백에 손으로 남깁니다</p>
+        <ul class="findings">
+          <li>반별 종이 출석부에 체크하며, 한 명에 2~3초가 걸립니다.<span class="ref">4, 5</span></li>
+          <li>늦은 학생은 이름 옆에 도착 시간을 손으로 적습니다.<span class="ref">6</span></li>
+          <li>안 온 학생은 수업 시작 10분 뒤에 훑어보고 전화로 연락합니다.<span class="ref">7, 8</span></li>
+        </ul>
+        <div class="facts">
+          <div><span>기록 위치</span><strong>반별 종이 출석부</strong></div>
+          <div><span>한 명 체크 시간</span><strong>2~3초</strong></div>
+          <div><span>늦은 학생</span><strong>도착 시간을 손으로</strong></div>
+          <div><span>결석 확인</span><strong>수업 시작 10분 뒤</strong></div>
+          <div><span>학부모 연락</span><strong>전화, 안 받으면 문자</strong></div>
+          <div><span>연락 기록</span><strong>출석부 여백</strong></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="who-name"><i class="mk p2"></i>새 출결 화면</div>
+        <p class="persona">늦은 학생과 안 온 학생을 바로 보여 줍니다</p>
+        <ul class="findings">
+          <li>처음에는 반 목록에서 오늘 반부터 찾았습니다.<span class="ref">10</span></li>
+          <li>이름 검색까지 하면 한 명에 10초쯤 걸렸습니다.<span class="ref">11</span></li>
+          <li>지각 버튼을 바로 찾았고, 도착 시간이 자동으로 찍히는 점을 좋아했습니다.<span class="ref">12</span></li>
+        </ul>
+        <div class="facts">
+          <div><span>처음 누른 곳</span><strong>반 목록의 오늘 반</strong></div>
+          <div><span>한 명 체크 시간</span><strong>10초쯤</strong></div>
+          <div><span>늦은 학생</span><strong>지각 버튼, 시간 자동</strong></div>
+          <div><span>바라는 것</span><strong>오늘 수업 반만 보기</strong></div>
+          <div><span>종이와 비교</span><strong>몰릴 때는 종이가 빠름</strong></div>
+          <div><span>학부모 연락</span><strong>전화번호가 보이면 사용</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="answers" aria-labelledby="h-answers">
+    <div class="rail">
+      <h2 id="h-answers">문항별 답변</h2>
+      <p>현장 테스트 질문 리스트의 순서 그대로 14개 문항과 답을 옮겼습니다. 녹음 요약에서 보탠 답이 함께 들어 있습니다.</p>
+    </div>
+    <div class="body" id="list"></div>
+  </section>
+</main>
+
+<div class="band">
+  <div class="page">
+    <section class="sec" id="compare" aria-labelledby="h-compare">
+      <div class="rail">
+        <h2 id="h-compare">비교</h2>
+        <p>같은 질문을 두고 종이 출석부와 새 출결 화면의 답이 갈린 곳은 2곳입니다. 진한 배지는 함께 정하고 싶은 부분입니다.</p>
+      </div>
+      <div class="body">
+        <div class="duel-head" aria-hidden="true">
+          <div class="plate l">종이 출석부<small>지금 쓰는 방식</small></div>
+          <div class="vs">VS</div>
+          <div class="plate">새 출결 화면<small>현장 테스트</small></div>
+        </div>
+
+        <div class="duel hot">
+          <div class="side l">한 명에 2~3초</div>
+          <div class="mid"><span class="axis">출석 체크 시간 (5, 11)</span><span class="verdict v-hot">함께 정할 것</span></div>
+          <div class="side">검색까지 10초쯤</div>
+          <p class="why">몰리는 시간에도 검색 없이 오늘 반 학생을 바로 누를 수 있게 하면 어떨까요?</p>
+        </div>
+
+        <div class="duel">
+          <div class="side l">도착 시간을 손으로</div>
+          <div class="mid"><span class="axis">늦은 학생 표시 (6, 12)</span><span class="verdict v-fit">보완</span></div>
+          <div class="side">지각 버튼, 시간 자동</div>
+          <p class="why">같은 정보를 남기되, 손으로 적던 시간을 화면이 대신 찍습니다.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<main class="page">
+  <section class="sec" id="support" aria-labelledby="h-support">
+    <div class="rail">
+      <h2 id="h-support">먼저 살펴볼 것</h2>
+      <p>학생이 들어와서 수업이 시작될 때까지의 순서로 놓았습니다. 만들기로 정한 목록이 아니라 먼저 살펴볼 순서입니다.</p>
+    </div>
+    <div class="body">
+      <ol class="rails">
+        <li><div><b>오늘 수업 반만 먼저 보이기</b><span>처음 화면에서 반 목록부터 뒤져 오늘 반을 찾았습니다. (10)</span></div></li>
+        <li><div><b>몰리는 시간의 출석 속도</b><span>종이는 한 명에 2~3초, 새 화면은 검색까지 10초쯤이었습니다. (5, 11, 13)</span></div></li>
+        <li><div><b>늦은 학생의 도착 시간</b><span>지금은 손으로 적고 있어, 자동으로 찍히는 점을 반겼습니다. (6, 12)</span></div></li>
+        <li><div><b>안 온 학생과 학부모 연락</b><span>지금은 10분 뒤 출석부를 훑어보고 전화합니다. 새 화면에서는 전화번호가 같이 보이면 쓰겠다고 했습니다. (7, 8, 14)</span></div></li>
+        <li><div><b>원장님이 보고 싶은 것</b><span>여쭤보지 못했습니다.</span></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec" id="proposal" aria-labelledby="h-proposal">
+    <div class="rail">
+      <h2 id="h-proposal">개선 방향 제안</h2>
+      <p>실장님의 테스트 반응을 바탕으로 한 개선 방향입니다. 현장에서 나온 작성자의 아이디어(결석 문자 버튼)는 응답이 아니라서 흐름에 넣지 않았습니다. 확정된 내용은 아닙니다.</p>
+    </div>
+    <div class="body">
+      <p class="ask">이런 흐름은 어떨까요?</p>
+      <p class="verdict-line">오늘 수업 반을 먼저 열고, 누르는 것만으로 출석과 도착 시간을 남깁니다.</p>
+
+      <h3 class="part">데스크 출결 흐름</h3>
+      <ol class="flow">
+        <li><b>오늘 반 열기</b><div class="who"><span>실장님</span></div>오늘 수업 있는 반만 보입니다</li>
+        <li><b>출석 누르기</b><div class="who"><span>실장님</span></div>검색 없이 이름을 바로 누릅니다</li>
+        <li><b>지각 기록</b><div class="who"><span>실장님</span></div>도착 시간이 자동으로 찍힙니다</li>
+        <li><b>안 온 학생 보기</b><div class="who"><span>실장님</span></div>수업 시작 뒤 바로 보입니다</li>
+        <li><b>학부모 연락</b><span class="decide">연락 방법: 실장님</span><div class="who"><span>실장님</span></div>전화번호가 함께 보입니다</li>
+        <li><b>연락 기록</b><div class="who"><span>실장님</span></div>누구와 통화했는지 남깁니다</li>
+      </ol>
+      <p class="note">몰리는 시간에 종이보다 느리면 화면을 쓰지 않을 수 있어, 검색 없이 누르는 단계를 앞에 두었습니다.</p>
+
+      <h3 class="part">함께 이야기할 것</h3>
+      <ul class="checks">
+        <li>몰리는 시간에도 화면으로 출석을 받으실 수 있을까요? (5, 11, 13)</li>
+        <li>오늘 수업 있는 반만 보이면, 보강으로 다른 반 학생이 왔을 때 불편하지 않을까요? (10)</li>
+        <li>결석 학생 학부모에게 화면에서 연락하신다면 어떤 정보가 함께 보여야 할까요? (14)</li>
+        <li>원장님은 이 화면에서 무엇을 보고 싶어 하실까요? 이번에는 여쭤보지 못했습니다.</li>
+        <li>위 흐름이 실제 데스크의 하루와 맞을까요?</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="bm" viewBox="0 0 14 16"><path d="M2 1h10v14l-5-3.5L2 15z" fill="currentColor"/></symbol>
+  <symbol id="chev" viewBox="0 0 10 10"><path d="M3 1.5 6.5 5 3 8.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<script>
+const GROUPS = {"PRE0": "현장 환경", "A0": "지금 쓰는 방식 관찰: 출석 확인", "A1": "지금 쓰는 방식 관찰: 결석 연락", "B0": "새 출결 화면 테스트: 첫 사용", "B1": "새 출결 화면 테스트: 반응"};
+const QS = [
+  {"n": 1, "g": "PRE0", "q": "데스크에 있는 사람", "r": {"a": "실장님 한 분, 오후 2시부터 9시까지"}},
+  {"n": 2, "g": "PRE0", "q": "데스크 기기", "r": {"a": "데스크톱 PC 1대, 태블릿은 없음"}},
+  {"n": 3, "g": "PRE0", "q": "학생 수와 몰리는 시간", "r": {"a": "초등 60명, 3시~6시에 몰림"}},
+  {"n": 4, "g": "A0", "q": "학생이 들어오면 출석을 어디에 적나요? [사진 촬영]", "r": {"a": "데스크 종이 출석부에 체크\n반별로 한 장씩, 클립보드에 꽂아 둠"}},
+  {"n": 5, "g": "A0", "q": "출석 체크에 걸리는 시간", "r": {"a": "한 명에 2~3초. 몰릴 때는 데스크 앞에 줄이 생김"}},
+  {"n": 6, "g": "A0", "q": "늦은 학생 표시", "r": {"a": "이름 옆에 도착 시간을 손으로 적음"}},
+  {"n": 7, "g": "A1", "q": "수업 시작 후 안 온 학생은 언제 확인하나요?", "r": {"a": "수업 시작 10분 뒤에 실장님이 출석부를 훑어봄"}},
+  {"n": 8, "g": "A1", "q": "학부모 연락은 어떻게 하나요?", "r": {"a": "전화. 안 받으면 문자"}},
+  {"n": 9, "g": "A1", "q": "결석 연락 기록은 어디에 남기나요?", "r": {"a": "출석부 여백에 \"母 통화\" 식으로 적음"}},
+  {"n": 10, "g": "B0", "q": "화면을 처음 보고 무엇부터 눌렀나요?", "r": {"a": "반 목록에서 오늘 반을 먼저 찾음\n오늘 수업 있는 반만 보이면 좋겠다고 함"}},
+  {"n": 11, "g": "B0", "q": "출석 체크에 걸리는 시간", "r": {"a": "이름 검색까지 하면 한 명에 10초 정도"}},
+  {"n": 12, "g": "B0", "q": "늦은 학생 표시", "r": {"a": "지각 버튼을 바로 찾음. 도착 시간이 자동으로 찍히는 걸 좋아함"}},
+  {"n": 13, "g": "B1", "q": "종이 출석부와 비교하면 어떤가요?", "r": {"a": "몰리는 시간에는 종이가 더 빠를 것 같다\n대신 안 온 학생이 바로 보이는 건 좋다"}},
+  {"n": 14, "g": "B1", "q": "결석 학생 학부모에게 화면에서 바로 연락할 수 있다면 쓰겠나요?", "r": {"a": "전화번호가 같이 보이면 쓰겠다"}},
+];
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const chev = '<svg aria-hidden="true"><use href="#chev"/></svg>';
+const bm = '<svg aria-hidden="true"><use href="#bm"/></svg>';
+
+function answer(q, r) {
+  if (!r) return '<p class="follow">답하지 않음</p>';
+  if (r.seq) {
+    return `<div class="seq">${r.seq.map((k, i) => `<span class="step"><span class="chip"><b>${k}</b>${esc(q.opts[k])}</span>${i < r.seq.length - 1 ? chev : ''}</span>`).join('')}</div>`;
+  }
+  let html = Array.isArray(r.a)
+    ? `<div class="chips">${r.a.map((c) => `<span class="chip">${esc(c)}</span>`).join('')}${r.o ? `<span class="chip other">${esc(r.o)}</span>` : ''}</div>`
+    : `<p class="text">${esc(r.a)}</p>`;
+  if (r.x) html += `${q.xq ? `<p class="follow">${esc(q.xq)}</p>` : ''}<p class="text">${esc(r.x)}</p>`;
+  return html;
+}
+
+function row(q, inner) {
+  return `<div class="row">
+    <div class="num">${q.n}${q.star ? bm : ''}</div>
+    <div><p class="q">${esc(q.q)}</p>${inner}</div>
+  </div>`;
+}
+
+function renderSolo(id, key) {
+  let html = '';
+  let group = '';
+  for (const q of QS) {
+    if (q.g !== group) {
+      group = q.g;
+      if (q.g) html += `<h3 class="qa-head">${esc(GROUPS[q.g])}</h3>`;
+    }
+    html += row(q, `<div class="a">${answer(q, q[key])}</div>`);
+  }
+  document.getElementById(id).innerHTML = html;
+}
+
+function renderPairs(id) {
+  const [a, b] = PEOPLE;
+  const names = `<div class="names" aria-hidden="true"><span></span><div class="duo"><div class="col"><i class="mk p1"></i>${esc(a.name)}</div><div class="col"><i class="mk p2"></i>${esc(b.name)}</div></div></div>`;
+  let html = '';
+  let group = '';
+  for (const q of QS) {
+    if (q.g !== group) {
+      group = q.g;
+      if (q.g) html += `<h3 class="qa-head">${esc(GROUPS[q.g])}</h3>`;
+      html += names;
+    }
+    html += row(q, `<div class="pair duo">
+      <div class="col" data-who="${esc(a.name)}">${answer(q, q[a.key])}</div>
+      <div class="col" data-who="${esc(b.name)}">${answer(q, q[b.key])}</div>
+    </div>`);
+  }
+  document.getElementById(id).innerHTML = html;
+}
+
+renderSolo('list', 'r');
+</script>
+</body>
+</html>

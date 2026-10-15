@@ -1,0 +1,7 @@
+# 원본 파일	받는 스킬 (공백으로 구분). scripts/skills.py sync가 각 스킬의 references/_shared/로 복사한다.
+ux-team-guide.md	hello-ux-team
+crossings.md	hello-ux-team kickoff call-lead handoff-check intent-check decision-log
+writing.md	artifact-style handoff-check call-lead decision-log kickoff intent-check
+tokens.css	artifact-style
+surfaces.md	hello-ux-team research-report feature-guide screen-to-hifi intent-check handoff-check
+team-places.md	kickoff call-lead decision-log

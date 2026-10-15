@@ -1,0 +1,164 @@
+/* 티키타 업데이트 안내 — SaaS 릴리즈 노트형 (A4 인쇄용)
+   토큰 출처: 티키타 화면 색 토큰 */
+
+:root {
+  --ink:      #0F121F;
+  --body:     #323647;
+  --muted:    #6B6F80;
+  --faint:    #8B8F9E;
+  --line:     #E1E3EB;
+  --hairline: #EDEFF5;
+  --surface:  #F5F6FA;
+  --brand:    #5F83FF;
+  --brand-deep: #4D6BE5;
+  --brand-bg: #E8EDFF;
+  --red:      #FF5226;
+  --red-bg:   #FFE7E1;
+}
+
+@page {
+  size: A4;
+  margin: 15mm 15mm 16mm;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+body {
+  margin: 0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont,
+               'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.62;
+  color: var(--body);
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+}
+
+/* ── 표지 블록 ─────────────────────────────── */
+.masthead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--ink);
+}
+.masthead img { height: 22px; width: auto; }
+.masthead .wordmark {
+  font-size: 15pt; font-weight: 800; color: var(--ink); letter-spacing: -0.03em;
+}
+.masthead .kicker {
+  font-size: 10pt; font-weight: 700; color: var(--brand-deep);
+  letter-spacing: -0.02em;
+}
+
+.lede { margin: 18px 0 4px; }
+.lede h1 {
+  margin: 0; font-size: 21pt; font-weight: 800;
+  color: var(--ink); letter-spacing: -0.045em; line-height: 1.28;
+}
+.lede .date {
+  margin-top: 7px; font-size: 9pt; color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.lede .subtitle {
+  margin-top: 11px; font-size: 10.5pt; color: var(--muted); max-width: 46em;
+}
+.lede + .group { margin-top: 26px; }
+
+/* ── 그룹(프로젝트) ─────────────────────────── */
+.group { margin-top: 30px; }
+.group > .group-head {
+  display: flex; align-items: baseline; gap: 9px;
+  padding-bottom: 7px; margin-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+  break-after: avoid; page-break-after: avoid;
+}
+.group-head h2 {
+  margin: 0; font-size: 14pt; font-weight: 700;
+  color: var(--ink); letter-spacing: -0.035em;
+}
+.group-head .tag {
+  font-size: 8.5pt; font-weight: 600; color: var(--brand-deep);
+  background: var(--brand-bg); border-radius: 999px; padding: 2px 9px;
+}
+
+/* ── 섹션(화면) ────────────────────────────── */
+.section { margin-top: 16px; break-inside: auto; }
+.section + .section { margin-top: 38px; }
+.section > h3 {
+  margin: 0 0 9px; padding-left: 9px;
+  font-size: 11.5pt; font-weight: 700; color: var(--ink);
+  letter-spacing: -0.03em;
+  border-left: 3px solid var(--brand);
+  break-after: avoid; page-break-after: avoid;
+}
+
+/* ── 항목 ──────────────────────────────────── */
+.item {
+  margin: 0 0 13px; padding-left: 9px;
+  break-inside: avoid; page-break-inside: avoid;
+}
+.item:last-child { margin-bottom: 0; }
+.item > .headline {
+  display: flex; gap: 7px; align-items: baseline;
+  font-size: 10.5pt; font-weight: 600; color: var(--ink);
+}
+.badge {
+  flex: none; font-size: 7.5pt; font-weight: 700; letter-spacing: 0.02em;
+  border-radius: 4px; padding: 2px 6px; line-height: 1.35;
+  position: relative; top: -1px;
+}
+.badge.new   { background: var(--brand-deep); color: #fff; }
+.badge.imp   { background: var(--surface); color: var(--muted); border: 1px solid var(--line); }
+.badge.fix   { background: var(--red-bg); color: var(--red); }
+
+.item ul { margin: 7px 0 0; padding: 0; list-style: none; }
+.item li {
+  position: relative; padding-left: 11px; margin-top: 3px;
+  font-size: 9.8pt; color: var(--body);
+}
+.item li::before {
+  content: ''; position: absolute; left: 2px; top: 0.62em;
+  width: 3px; height: 3px; border-radius: 50%; background: var(--faint);
+}
+.item li ul { margin-top: 3px; }
+.item li li { font-size: 9.4pt; color: var(--muted); }
+
+/* ── 짚어둘 것 ─────────────────────────────── */
+.note {
+  margin: 8px 0 0; padding: 9px 12px;
+  background: var(--surface); border-left: 3px solid var(--brand);
+  border-radius: 0 5px 5px 0;
+  font-size: 9.5pt; color: var(--body);
+  break-inside: avoid; page-break-inside: avoid;
+}
+.note strong { color: var(--ink); font-weight: 700; }
+
+/* ── 스크린샷 ──────────────────────────────── */
+figure {
+  margin: 10px 0 0; padding: 0;
+  break-inside: avoid; page-break-inside: avoid;
+}
+figure img {
+  display: block; max-width: 100%; max-height: 132mm;
+  margin: 0 auto;
+  border: 1px solid var(--line); border-radius: 7px;
+  background: #fff;
+}
+figcaption {
+  margin-top: 5px; text-align: center;
+  font-size: 8.5pt; color: var(--faint);
+}
+
+/* ── 꼬리말 ────────────────────────────────── */
+/* ⛔ position: fixed 를 쓰지 않는다. Chrome 인쇄에서 매 페이지에 반복되지 않고
+   본문 위에 겹쳐 찍힌다(2026-09-10 실측). 문서 끝에 한 번만 둔다. */
+.docfoot {
+  margin-top: 34px; padding-top: 8px;
+  border-top: 1px solid var(--hairline);
+  display: flex; justify-content: space-between;
+  font-size: 8.5pt; color: var(--faint);
+  break-inside: avoid; page-break-inside: avoid;
+}

@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__/
+# 제작 기록은 리드 로컬에만 둔다 (저장소를 읽는 팀원에게 보이지 않게)
+docs/tracks/
+# 공개 저장소라 정책 위키 사본을 담지 않는다 (DEC-20)
+plugins/ux-team/skills/tikita-policy/references/wiki/
