@@ -1,6 +1,6 @@
 ---
 name: ticket-create
-version: 1.1.0
+version: 1.1.1
 description: "메모·이미지·파일로 ClickUp 오류·개선 티켓을 작성한다. '오류 티켓 만들어 줘', '개선사항 등록해 줘', '티켓 초안만 작성해 줘'에 쓴다. 새 티켓의 초안과 등록을 맡으며 기존 티켓 수정·댓글·프로젝트 등록은 맡지 않는다."
 author: lee-changwook
 relates: []
