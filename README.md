@@ -48,6 +48,7 @@ Claude 앱(Chat · Cowork)과 Claude Code에서 같은 스킬을 씁니다.
 |---|---|---|
 | `hello-ux-team` | 설치하고 처음 한 번, 리드가 팀 지침이 바뀌었다고 알렸을 때 실행합니다. 이것만 직접 불러야 합니다. | `/hello-ux-team` |
 | `kickoff` | 배정받은 프로젝트를 ClickUp 팀 스페이스에 상위 태스크로 등록합니다. 만들기 전에 초안을 보여 줍니다. | "프로젝트 배정됐어" |
+| `ticket-create` | 메모·이미지로 오류·개선 티켓의 표준 초안을 만들고, 확인 후 ClickUp에 등록합니다. 초안만 받을 수도 있습니다. | "오류 티켓 만들어 줘" · "티켓 초안만 작성해 줘" |
 | `research-report` | 인터뷰 · 설문 · 현장 테스트 메모를 팀에 공유할 리포트(HTML 또는 PDF)로 만듭니다. | "인터뷰 정리해 줘" |
 | `screen-to-hifi` | staging 화면을 Figma로 가져와, 말로 준 개선 방향을 hifi 시안으로 얹습니다. | "이 화면 피그마로 떠 줘" |
 | `call-lead` | 프로토타입을 만들다 막혔을 때 리드를 부릅니다. 내용은 ClickUp 댓글에 쓰고, Slack에는 링크와 멘션만 보냅니다. | "막혔어, 리드 불러 줘" |
@@ -65,7 +66,7 @@ Claude Code에는 앱에서 연결한 커넥터가 따라오고, 새 세션을 �
 
 | 커넥터 | 쓰는 스킬 |
 |---|---|
-| ClickUp | `kickoff` · `decision-log` · `call-lead` |
+| ClickUp | `kickoff` · `decision-log` · `call-lead` · `ticket-create`(등록할 때) |
 | Slack | `call-lead` |
 | Figma | `screen-to-hifi` |
 
